@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "Main Code",
+			"path": "Main-Esp32"
+		},
+		{
+			"name": "Pwm Driver",
+			"path": "Atmega328p-pwm-driver"
+		},
+
+		{
+			"name": "Sonar Driver",
+			"path": "Attiny85-sonar-driver"
+		}
+	],
+	"settings": {}
+}
