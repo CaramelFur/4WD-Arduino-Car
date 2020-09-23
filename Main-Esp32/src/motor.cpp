@@ -34,3 +34,19 @@ void moveMotor(Motors motor, int16_t speed)
     moveMotor(motor, abs(speed), 1);
   }
 }
+
+void moveAllMotors(int16_t speed)
+{
+  for (int i = 0; i < 4; i++)
+  {
+    moveMotor((Motors)i, speed);
+  }
+}
+
+void moveAllMotors(uint8_t speed, bool dir)
+{
+  for (int i = 0; i < 4; i++)
+  {
+    moveMotor((Motors)i, speed, dir);
+  }
+}

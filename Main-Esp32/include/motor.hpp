@@ -14,3 +14,5 @@ enum Motors {
 
 void moveMotor(Motors motor, uint8_t speed, bool dir);
 void moveMotor(Motors motor, int16_t speed);
+void moveAllMotors(int16_t speed);
+void moveAllMotors(uint8_t speed, bool dir);
