@@ -44,11 +44,14 @@ void setSonarMaxDistance(uint16_t maxDistance)
 
 PullData retrieveSensorData()
 {
-  PullData value;
+  PullData value{
+      0,
+      -1,
+      100,
+      90};
 
-  Wire.requestFrom(SENSOR_I2C_ADRESS, 8);
-  while (Wire.available() < 8)
-    ;
+  if (Wire.requestFrom(SENSOR_I2C_ADRESS, 8) < 8)
+    return value;
 
   value.currentDistance = readU16();
   value.fetchSpeed = readU16();

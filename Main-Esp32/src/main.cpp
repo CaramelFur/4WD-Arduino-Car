@@ -8,7 +8,9 @@ SSD1306 display(DISPLAY_ADDRESS, SDA, SCL);
 void setup()
 {
   // Wait for other devices to start
-  delay(200);
+
+
+  Serial.begin(115200);
 
   initLeds();
   initDisplay();
