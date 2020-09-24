@@ -5,3 +5,4 @@
 #pragma once
 
 void receiveEvent(int input);
+void resetPWM();

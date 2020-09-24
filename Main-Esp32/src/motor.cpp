@@ -8,7 +8,7 @@ const uint8_t motorPins[4][2] = {
 
 void moveMotor(Motors motor, uint8_t speed, bool dir)
 {
-  Wire.beginTransmission(MOTOR_CONTROLER);
+  Wire.beginTransmission(MOTOR_CONTROLER_I2C_ADRESS);
 
   Wire.write(motorPins[motor][dir]);
   Wire.write(0);
@@ -49,4 +49,9 @@ void moveAllMotors(uint8_t speed, bool dir)
   {
     moveMotor((Motors)i, speed, dir);
   }
+}
+
+int speedToPWM(float speed)
+{
+  return (speed - MPS_VALUE_B) / MPS_VALUE_A;
 }

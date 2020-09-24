@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <Wire.h>
+#include <FastLED.h>
 #include "SSD1306.h"
 #include "motor.hpp"
-#include <FastLED.h>
+#include "servosensor.hpp"
 
 #pragma once
 
@@ -21,4 +22,7 @@
 #define RGB_ADDRESS 0x20
 #define RGB_COUNT 10
 
+void printString(String string);
+
 void initDisplay();
+void initLeds();

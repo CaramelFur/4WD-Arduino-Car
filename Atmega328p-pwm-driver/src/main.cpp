@@ -2,10 +2,6 @@
 
 const uint8_t outputCount = 8;
 uint8_t outputs[outputCount] = {0, 1, 2, 3, 5, 6, 7, 8};
-u8 hello;
-u16 hel;
-u32 hell;
-
 
 void setup()
 {
@@ -14,8 +10,7 @@ void setup()
 
   SoftPWMBegin();
 
-  for (int i = 0; i < outputCount; i++)
-    SoftPWMSet(outputs[i], 0);
+  resetPWM();
 }
 
 void loop()
@@ -29,9 +24,19 @@ void receiveEvent(int input)
   {
     byte output = Wire.read();
     byte value = Wire.read();
-    if (output < outputCount)
+    if (value == 0xf0)
+    {
+      resetPWM();
+    }
+    else if (output < outputCount)
     {
       SoftPWMSet(outputs[output], value);
     }
   }
+}
+
+void resetPWM()
+{
+  for (int i = 0; i < outputCount; i++)
+    SoftPWMSet(outputs[i], 0);
 }
