@@ -7,15 +7,14 @@ SSD1306 display(DISPLAY_ADDRESS, SDA, SCL);
 // Setup function
 void setup()
 {
-  // Wait for other devices to start
-
-
   Serial.begin(115200);
 
   initLeds();
   initDisplay();
-  resetServoSensor();
-  moveAllMotors(0);
+  while (!beginServoSensor())
+    ;
+  while (!beginMotor())
+    ;
 
   setSonarPingSpeed(100);
 

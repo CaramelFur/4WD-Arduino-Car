@@ -74,6 +74,7 @@ void receiveEvent(int howMany)
 
 void readEvent()
 {
+  Wire.write(I2C_ADRESS);
   sendInt16(currentDistance);
   sendInt16(fetchSpeed);
   sendInt16(maxDistance);

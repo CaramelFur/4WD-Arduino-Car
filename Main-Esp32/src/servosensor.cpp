@@ -1,6 +1,6 @@
 #include "servosensor.hpp"
 
-void sendU16(uint16_t value)
+void send16(uint16_t value)
 {
   // Gives narrowing warning, thats ok
   uint8_t send[2] = {
@@ -9,22 +9,25 @@ void sendU16(uint16_t value)
   Wire.write(send, 2);
 }
 
-uint16_t readU16()
+int16_t read16()
 {
   return (Wire.read() << 8) | Wire.read();
 }
 
-void sendCommand(uint8_t command, uint16_t value)
+void sendCommand(uint8_t command, int16_t value)
 {
   Wire.beginTransmission(SENSOR_I2C_ADRESS);
   Wire.write(command);
-  sendU16(value);
+  send16(value);
   Wire.endTransmission();
 }
 
-void moveServo(uint8_t position)
+bool beginServoSensor()
 {
-  sendCommand(SENSOR_CMD_SERVOPOS, position);
+  if (retrieveSensorData().id != SENSOR_I2C_ADRESS)
+    return false;
+  resetServoSensor();
+  return true;
 }
 
 void resetServoSensor()
@@ -32,12 +35,17 @@ void resetServoSensor()
   sendCommand(SENSOR_CMD_RESET, 0);
 }
 
-void setSonarPingSpeed(uint16_t milliseconds)
+void moveServo(uint8_t position)
+{
+  sendCommand(SENSOR_CMD_SERVOPOS, position);
+}
+
+void setSonarPingSpeed(int16_t milliseconds)
 {
   sendCommand(SENSOR_CMD_PINGSPEED, milliseconds);
 }
 
-void setSonarMaxDistance(uint16_t maxDistance)
+void setSonarMaxDistance(int16_t maxDistance)
 {
   sendCommand(SENSOR_CMD_PINGSPEED, maxDistance);
 }
@@ -46,37 +54,39 @@ PullData retrieveSensorData()
 {
   PullData value{
       0,
+      0,
       -1,
       100,
       90};
 
-  if (Wire.requestFrom(SENSOR_I2C_ADRESS, 8) < 8)
+  if (Wire.requestFrom(SENSOR_I2C_ADRESS, 9) < 9)
     return value;
 
-  value.currentDistance = readU16();
-  value.fetchSpeed = readU16();
-  value.maxDistance = readU16();
-  value.servoPosition = readU16();
+  value.id = Wire.read();
+  value.currentDistance = read16();
+  value.fetchSpeed = read16();
+  value.maxDistance = read16();
+  value.servoPosition = read16();
 
   return value;
 }
 
-uint16_t getSonarDistance()
+int16_t getSonarDistance()
 {
   return retrieveSensorData().currentDistance;
 }
 
-uint16_t getSonarFetchSpeed()
+int16_t getSonarFetchSpeed()
 {
   return retrieveSensorData().fetchSpeed;
 }
 
-uint16_t getSonarMaxDistance()
+int16_t getSonarMaxDistance()
 {
   return retrieveSensorData().maxDistance;
 }
 
-uint16_t getServoPosition()
+int16_t getServoPosition()
 {
   return retrieveSensorData().servoPosition;
 }

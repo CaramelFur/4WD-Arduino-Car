@@ -5,8 +5,9 @@ uint8_t outputs[outputCount] = {0, 1, 2, 3, 5, 6, 7, 8};
 
 void setup()
 {
-  Wire.begin(8);
+  Wire.begin(I2C_ADRESS);
   Wire.onReceive(receiveEvent);
+  Wire.onRequest(readEvent);
 
   SoftPWMBegin();
 
@@ -33,6 +34,11 @@ void receiveEvent(int input)
       SoftPWMSet(outputs[output], value);
     }
   }
+}
+
+void readEvent()
+{
+  Wire.write(I2C_ADRESS);
 }
 
 void resetPWM()

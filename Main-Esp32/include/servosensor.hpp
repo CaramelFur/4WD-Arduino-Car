@@ -14,21 +14,23 @@
 
 struct PullData
 {
-  uint16_t currentDistance;
-  uint16_t fetchSpeed;
-  uint16_t maxDistance;
-  uint16_t servoPosition;
+  uint8_t id;
+  int16_t currentDistance;
+  int16_t fetchSpeed;
+  int16_t maxDistance;
+  int16_t servoPosition;
 };
 
 void moveServo(uint8_t position);
-void setSonarPingSpeed(uint16_t milliseconds);
-void setSonarMaxDistance(uint16_t maxDistance);
+void setSonarPingSpeed(int16_t milliseconds);
+void setSonarMaxDistance(int16_t maxDistance);
 
+bool beginServoSensor();
 void resetServoSensor();
 
 PullData retrieveSensorData();
 
-uint16_t getSonarDistance();
-uint16_t getSonarFetchSpeed();
-uint16_t getSonarMaxDistance();
-uint16_t getServoPosition();
+int16_t getSonarDistance();
+int16_t getSonarFetchSpeed();
+int16_t getSonarMaxDistance();
+int16_t getServoPosition();

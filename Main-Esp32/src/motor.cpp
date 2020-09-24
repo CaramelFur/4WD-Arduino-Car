@@ -6,9 +6,32 @@ const uint8_t motorPins[4][2] = {
     {5, 4},
     {6, 7}};
 
+bool beginMotor()
+{
+  if (readId() != MOTOR_CONTROLLER_I2C_ADRESS)
+    return false;
+  resetMotor();
+  return true;
+}
+
+void resetMotor()
+{
+  Wire.beginTransmission(MOTOR_CONTROLLER_I2C_ADRESS);
+  Wire.write(MOTOR_CONTROLLER_CMD_RESET);
+  Wire.write(0x00);
+  Wire.endTransmission();
+}
+
+uint8_t readId()
+{
+  if (Wire.requestFrom(MOTOR_CONTROLLER_I2C_ADRESS, 1) < 1)
+    return 0;
+  return Wire.read();
+}
+
 void moveMotor(Motors motor, uint8_t speed, bool dir)
 {
-  Wire.beginTransmission(MOTOR_CONTROLER_I2C_ADRESS);
+  Wire.beginTransmission(MOTOR_CONTROLLER_I2C_ADRESS);
 
   Wire.write(motorPins[motor][dir]);
   Wire.write(0);
