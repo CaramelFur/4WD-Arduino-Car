@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <FastLED.h>
-#include "SSD1306.h"
+#include <U8g2lib.h>
+#include <SSD1306Wire.h>
 #include "motor.hpp"
 #include "servosensor.hpp"
 

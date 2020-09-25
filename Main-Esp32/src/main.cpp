@@ -2,7 +2,8 @@
 
 CRGB leds[NUM_LEDS];
 
-SSD1306 display(DISPLAY_ADDRESS, SDA, SCL);
+//U8G2_SSD1306_128X64_ALT0_1_HW_I2C display(U8G2_R0, /* reset=*/OLED_RST, /* clock=*/SCL, /* data=*/SDA);
+SSD1306Wire display(DISPLAY_ADDRESS, SDA, SCL);
 
 // Setup function
 void setup()
@@ -19,6 +20,15 @@ void setup()
   setSonarPingSpeed(100);
 
   printString("Ready");
+
+  delay(2000);
+
+  moveMotors(Sides::Front, 255);
+  moveMotors(Sides::Back, -255);
+
+  delay(5000);
+
+  moveAllMotors(0);
 }
 
 // Loop function
@@ -46,6 +56,11 @@ void initDisplay()
 
   display.init();
   display.flipScreenVertically();
+  display.setContrast(255);
+  display.clear();
+  display.display();
+
+  printString("Loading...");
 }
 
 void initLeds()

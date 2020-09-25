@@ -20,12 +20,24 @@ enum Motors
   FrontLeft = 3
 };
 
+enum Sides 
+{
+  Left,
+  Right,
+  Front,
+  Back,
+};
+
 bool beginMotor();
 void resetMotor();
 uint8_t readId();
 
 void moveMotor(Motors motor, uint8_t speed, bool dir);
 void moveMotor(Motors motor, int16_t speed);
+
+void moveMotors(Sides side, uint8_t speed, bool dir);
+void moveMotors(Sides side, uint16_t speed);
+
 void moveAllMotors(int16_t speed);
 void moveAllMotors(uint8_t speed, bool dir);
 

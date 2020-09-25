@@ -58,6 +58,52 @@ void moveMotor(Motors motor, int16_t speed)
   }
 }
 
+void moveMotors(Sides side, uint8_t speed, bool dir)
+{
+  switch (side)
+  {
+  case Sides::Left:
+    moveMotor(Motors::BackLeft, speed, dir);
+    moveMotor(Motors::FrontLeft, speed, dir);
+    break;
+  case Sides::Right:
+    moveMotor(Motors::BackRight, speed, dir);
+    moveMotor(Motors::FrontRight, speed, dir);
+    break;
+  case Sides::Front:
+    moveMotor(Motors::FrontLeft, speed, dir);
+    moveMotor(Motors::FrontRight, speed, dir);
+    break;
+  case Sides::Back:
+    moveMotor(Motors::BackRight, speed, dir);
+    moveMotor(Motors::BackLeft, speed, dir);
+    break;
+  }
+}
+
+void moveMotors(Sides side, uint16_t speed)
+{
+  switch (side)
+  {
+  case Sides::Left:
+    moveMotor(Motors::BackLeft, speed);
+    moveMotor(Motors::FrontLeft, speed);
+    break;
+  case Sides::Right:
+    moveMotor(Motors::BackRight, speed);
+    moveMotor(Motors::FrontRight, speed);
+    break;
+  case Sides::Front:
+    moveMotor(Motors::FrontLeft, speed);
+    moveMotor(Motors::FrontRight, speed);
+    break;
+  case Sides::Back:
+    moveMotor(Motors::BackRight, speed);
+    moveMotor(Motors::BackLeft, speed);
+    break;
+  }
+}
+
 void moveAllMotors(int16_t speed)
 {
   for (int i = 0; i < 4; i++)
