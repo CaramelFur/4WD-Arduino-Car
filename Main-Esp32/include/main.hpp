@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <FastLED.h>
-#include <U8g2lib.h>
 #include <SSD1306Wire.h>
+#include <BluetoothSerial.h>
 #include "motor.hpp"
 #include "servosensor.hpp"
 
@@ -22,6 +22,8 @@
 
 #define RGB_ADDRESS 0x20
 #define RGB_COUNT 10
+
+void processCommand(String command);
 
 void printString(String string);
 
