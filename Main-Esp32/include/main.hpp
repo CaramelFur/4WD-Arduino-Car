@@ -5,6 +5,7 @@
 #include <BluetoothSerial.h>
 #include "motor.hpp"
 #include "servosensor.hpp"
+#include "line.hpp"
 
 #pragma once
 

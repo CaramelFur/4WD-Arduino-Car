@@ -21,6 +21,7 @@ void setup()
 
   initLeds();
   initDisplay();
+  beginLine();
   while (!beginServoSensor())
     ;
   while (!beginMotor())
@@ -34,7 +35,29 @@ void setup()
 // Loop function
 void loop()
 {
-  if (SerialBT.hasClient())
+
+  auto line = readLine();
+  auto toPrint = String(line.a);
+  toPrint.concat(" ");
+  toPrint.concat(line.b);
+  toPrint.concat(" ");
+  toPrint.concat(line.c);
+  printString(toPrint);
+
+  if(line.a){
+    moveMotors(Sides::Left, 50);
+  }else{
+    moveMotors(Sides::Left, 0);
+  }
+  delay(1);
+  if(line.c){
+    moveMotors(Sides::Right, 50);
+  }else{
+    moveMotors(Sides::Right, 0);
+  }
+  delay(1);
+
+  /*if (SerialBT.hasClient())
   {
     printString("Connected");
     while (SerialBT.hasClient())
@@ -48,8 +71,8 @@ void loop()
     }
     printString("Ready!");
     moveAllMotors(0);
-  }
-  delay(10);
+  }*/
+  //delay(5);
 }
 
 void processCommand(String command)
@@ -98,6 +121,8 @@ void initDisplay()
   display.init();
   display.flipScreenVertically();
   display.setContrast(255);
+  display.setBrightness(255);
+  display.setFont(ArialMT_Plain_24);
   display.clear();
   display.display();
 
