@@ -2,6 +2,7 @@
 
 CRGB leds[NUM_LEDS];
 SSD1306Wire display(DISPLAY_ADDRESS, SDA, SCL);
+Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 
 BluetoothSerial SerialBT;
 
@@ -26,6 +27,8 @@ void setup()
     ;
   while (!beginMotor())
     ;
+  while (!mag.begin())
+    ;
 
   setSonarPingSpeed(100);
   // Done initializing
@@ -35,7 +38,36 @@ void setup()
 // Loop function
 void loop()
 {
+  delay(200);
+  sensors_event_t event;
+  mag.getEvent(&event);
+  
+  Serial.print("X: "); Serial.print(event.magnetic.x); Serial.print("  ");
+  Serial.print("Y: "); Serial.print(event.magnetic.y); Serial.print("  ");
+  Serial.print("Z: "); Serial.print(event.magnetic.z); Serial.print("  ");Serial.println("uT");
+  float heading = atan2(event.magnetic.y, event.magnetic.x);
+  
+  // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
+  // Find yours here: http://www.magnetic-declination.com/
+  // Mine is: -13* 2' W, which is ~13 Degrees, or (which we need) 0.22 radians
+  // If you cannot find your Declination, comment out these two lines, your compass will be slightly off.
+  float declinationAngle = 0.22;
+  heading += declinationAngle;
+  
+  // Correct for when signs are reversed.
+  if(heading < 0)
+    heading += 2*PI;
+    
+  // Check for wrap due to addition of declination.
+  if(heading > 2*PI)
+    heading -= 2*PI;
+   
+  // Convert radians to degrees for readability.
+  float headingDegrees = heading * 180/M_PI; 
+  
+  Serial.print("Heading (degrees): "); Serial.println(headingDegrees);
 
+  /*
   auto line = readLine();
   auto toPrint = String(line.a);
   toPrint.concat(" ");
@@ -44,18 +76,24 @@ void loop()
   toPrint.concat(line.c);
   printString(toPrint);
 
-  if(line.a){
-    moveMotors(Sides::Left, 50);
-  }else{
-    moveMotors(Sides::Left, 0);
+  if (!line.a && !line.c)
+  {
+    moveAllMotors(50);
   }
-  delay(1);
-  if(line.c){
-    moveMotors(Sides::Right, 50);
-  }else{
-    moveMotors(Sides::Right, 0);
+  else if (line.a && line.c)
+  {
+    moveAllMotors(0);
   }
-  delay(1);
+  else if (line.a)
+  {
+    moveMotors(Left, -80);
+    moveMotors(Right, 80);
+  }
+  else if (line.c)
+  {
+    moveMotors(Right, -80);
+    moveMotors(Left, 80);
+  }*/
 
   /*if (SerialBT.hasClient())
   {
@@ -111,6 +149,8 @@ void printString(String string)
   Serial.println(string);
 }
 
+
+
 void initDisplay()
 {
   pinMode(OLED_RST, OUTPUT);
@@ -122,7 +162,7 @@ void initDisplay()
   display.flipScreenVertically();
   display.setContrast(255);
   display.setBrightness(255);
-  display.setFont(ArialMT_Plain_24);
+  display.setFont(ArialMT_Plain_16);
   display.clear();
   display.display();
 

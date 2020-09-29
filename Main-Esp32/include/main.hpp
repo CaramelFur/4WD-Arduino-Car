@@ -3,6 +3,7 @@
 #include <FastLED.h>
 #include <SSD1306Wire.h>
 #include <BluetoothSerial.h>
+#include <Adafruit_HMC5883_U.h>
 #include "motor.hpp"
 #include "servosensor.hpp"
 #include "line.hpp"

@@ -8,8 +8,8 @@ void beginLine(){
 
 LineResult readLine(){
   LineResult result;
-  result.a = !digitalRead(PIN_A);
-  result.b = !digitalRead(PIN_B);
-  result.c = !digitalRead(PIN_C);
+  result.a = digitalRead(PIN_A);
+  result.b = digitalRead(PIN_B);
+  result.c = digitalRead(PIN_C);
   return result;
 }
