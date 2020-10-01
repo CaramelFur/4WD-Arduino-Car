@@ -31,3 +31,6 @@ void printString(String string);
 
 void initDisplay();
 void initLeds();
+
+void setLeds(int start, int end, CRGB color);
+void setAllLeds(CRGB color);

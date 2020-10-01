@@ -2,7 +2,6 @@
 
 CRGB leds[NUM_LEDS];
 SSD1306Wire display(DISPLAY_ADDRESS, SDA, SCL);
-Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 
 BluetoothSerial SerialBT;
 
@@ -27,8 +26,6 @@ void setup()
     ;
   while (!beginMotor())
     ;
-  while (!mag.begin())
-    ;
 
   setSonarPingSpeed(100);
   // Done initializing
@@ -38,64 +35,7 @@ void setup()
 // Loop function
 void loop()
 {
-  delay(200);
-  sensors_event_t event;
-  mag.getEvent(&event);
-  
-  Serial.print("X: "); Serial.print(event.magnetic.x); Serial.print("  ");
-  Serial.print("Y: "); Serial.print(event.magnetic.y); Serial.print("  ");
-  Serial.print("Z: "); Serial.print(event.magnetic.z); Serial.print("  ");Serial.println("uT");
-  float heading = atan2(event.magnetic.y, event.magnetic.x);
-  
-  // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
-  // Find yours here: http://www.magnetic-declination.com/
-  // Mine is: -13* 2' W, which is ~13 Degrees, or (which we need) 0.22 radians
-  // If you cannot find your Declination, comment out these two lines, your compass will be slightly off.
-  float declinationAngle = 0.22;
-  heading += declinationAngle;
-  
-  // Correct for when signs are reversed.
-  if(heading < 0)
-    heading += 2*PI;
-    
-  // Check for wrap due to addition of declination.
-  if(heading > 2*PI)
-    heading -= 2*PI;
-   
-  // Convert radians to degrees for readability.
-  float headingDegrees = heading * 180/M_PI; 
-  
-  Serial.print("Heading (degrees): "); Serial.println(headingDegrees);
-
-  /*
-  auto line = readLine();
-  auto toPrint = String(line.a);
-  toPrint.concat(" ");
-  toPrint.concat(line.b);
-  toPrint.concat(" ");
-  toPrint.concat(line.c);
-  printString(toPrint);
-
-  if (!line.a && !line.c)
-  {
-    moveAllMotors(50);
-  }
-  else if (line.a && line.c)
-  {
-    moveAllMotors(0);
-  }
-  else if (line.a)
-  {
-    moveMotors(Left, -80);
-    moveMotors(Right, 80);
-  }
-  else if (line.c)
-  {
-    moveMotors(Right, -80);
-    moveMotors(Left, 80);
-  }*/
-
-  /*if (SerialBT.hasClient())
+  if (SerialBT.hasClient())
   {
     printString("Connected");
     while (SerialBT.hasClient())
@@ -109,8 +49,8 @@ void loop()
     }
     printString("Ready!");
     moveAllMotors(0);
-  }*/
-  //delay(5);
+  }
+  delay(5);
 }
 
 void processCommand(String command)
@@ -149,8 +89,6 @@ void printString(String string)
   Serial.println(string);
 }
 
-
-
 void initDisplay()
 {
   pinMode(OLED_RST, OUTPUT);
@@ -162,7 +100,7 @@ void initDisplay()
   display.flipScreenVertically();
   display.setContrast(255);
   display.setBrightness(255);
-  display.setFont(ArialMT_Plain_16);
+  display.setFont(ArialMT_Plain_24);
   display.clear();
   display.display();
 
@@ -172,9 +110,14 @@ void initDisplay()
 void initLeds()
 {
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+  setAllLeds(CRGB::Black);
+}
+
+void setAllLeds(CRGB color)
+{
   for (int i = 0; i < NUM_LEDS; i++)
   {
-    leds[i] = CRGB::Black;
+    leds[i] = color;
   }
   FastLED.show();
 }

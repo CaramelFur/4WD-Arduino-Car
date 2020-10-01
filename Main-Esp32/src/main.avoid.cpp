@@ -7,6 +7,8 @@ SSD1306Wire display(DISPLAY_ADDRESS, SDA, SCL);
 #define MOTOR_SPEED_NORMAL 60
 #define MOTOR_SPEED_TURN 100
 
+const CRGB colors[5] = {CRGB::Red, CRGB::Magenta, CRGB::Blue, CRGB::Yellow, CRGB::Green};
+
 // Setup function
 void setup()
 {
@@ -29,7 +31,7 @@ void setup()
   // Done initializing
   printString("Ready!");
 
-  setAllLeds(CRGB::Blue);
+  setAllLeds(CRGB::Green);
 
   // Wait for button press to start
   while (digitalRead(BUTTON_PIN))
@@ -56,7 +58,14 @@ bool measure()
   }
   delay(100);
   int16_t dis = getSonarDistance();
+
   printString(String(dis));
+  int16_t remaindis = dis % 20;
+  setLeds(0, 4, colors[(dis - remaindis) / 20]);
+  int16_t lastRemaindis = dis % 5;
+  setLeds(5, 6, colors[(remaindis - lastRemaindis) / 5]);
+  setLeds(8, 9, colors[lastRemaindis]);
+
   return dis > MIN_DISTANCE;
 }
 
@@ -66,11 +75,9 @@ void loop()
 {
   while (measure())
   {
-    setAllLeds(CRGB::Green);
     moveAllMotors(MOTOR_SPEED_NORMAL);
   }
 
-  setAllLeds(CRGB::Red);
   moveAllMotors(-MOTOR_SPEED_TURN);
   delay(200);
 
@@ -122,11 +129,16 @@ void initLeds()
   setAllLeds(CRGB::Black);
 }
 
-void setAllLeds(CRGB color)
+void setLeds(int start, int end, CRGB color)
 {
-  for (int i = 0; i < NUM_LEDS; i++)
+  for (int i = start; i <= end; i++)
   {
     leds[i] = color;
   }
   FastLED.show();
+}
+
+void setAllLeds(CRGB color)
+{
+  setLeds(0, NUM_LEDS - 1, color);
 }
