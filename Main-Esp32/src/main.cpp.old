@@ -1,0 +1,127 @@
+#include "main.hpp"
+
+CRGB leds[NUM_LEDS];
+SSD1306Wire display(DISPLAY_ADDRESS, SDA, SCL);
+
+#define MIN_DISTANCE 15
+#define MOTOR_SPEED_NORMAL 60
+#define MOTOR_SPEED_TURN 100
+
+// Setup function
+void setup()
+{
+  // Intialize
+  Serial.begin(115200);
+
+  // Wait for serial monitor to connect
+  delay(500);
+
+  // Intialize every component
+  initLeds();
+  initDisplay();
+  while (!beginServoSensor())
+    ;
+  while (!beginMotor())
+    ;
+
+  // Fetch distance every 2 milliseconds
+  setSonarPingSpeed(2);
+  // Done initializing
+  printString("Ready!");
+
+  setAllLeds(CRGB::Blue);
+
+  // Wait for button press to start
+  while (digitalRead(BUTTON_PIN))
+    ;
+}
+
+bool measure()
+{
+  int16_t measure_one = getSonarDistance();
+  printString(String(measure_one));
+
+  if (measure_one <= MIN_DISTANCE)
+    return false;
+
+  moveServo(90);
+  delay(150);
+  int16_t measure_two = getSonarDistance();
+  printString(String(measure_two));
+
+  if (measure_two <= MIN_DISTANCE)
+    return false;
+
+  moveServo(140);
+  delay(150);
+  int16_t measure_three = getSonarDistance();
+  printString(String(measure_three));
+
+  return measure_three > MIN_DISTANCE;
+}
+
+// Loop function
+
+void loop()
+{
+  while (measure())
+  {
+    setAllLeds(CRGB::Green);
+    // Always drive a bit to left to ensure driving around the permiter
+    moveMotors(Left, MOTOR_SPEED_NORMAL - 20);
+    moveMotors(Right, MOTOR_SPEED_NORMAL + 30);
+  }
+
+  setAllLeds(CRGB::Red);
+  moveAllMotors(-MOTOR_SPEED_TURN);
+  delay(100);
+
+  moveMotors(Left, MOTOR_SPEED_TURN);
+  moveMotors(Right, -MOTOR_SPEED_TURN);
+  delay(200);
+
+  moveAllMotors(0);
+}
+
+// Other stuff
+
+void printString(String string)
+{
+  display.clear();
+  display.drawString(0, 0, string);
+  display.display();
+  Serial.println(string);
+}
+
+void initDisplay()
+{
+  pinMode(OLED_RST, OUTPUT);
+  digitalWrite(OLED_RST, LOW);
+  delay(50);
+  digitalWrite(OLED_RST, HIGH);
+
+  display.init();
+  display.flipScreenVertically();
+  display.setContrast(255);
+  display.setBrightness(255);
+  display.setFont(ArialMT_Plain_24);
+  display.clear();
+  display.display();
+
+  printString("Loading...");
+}
+
+void initLeds()
+{
+  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+  setAllLeds(CRGB::Black);
+}
+
+void setAllLeds(CRGB color)
+{
+  for (int i = 0; i < NUM_LEDS; i++)
+  {
+    leds[i] = color;
+  }
+  FastLED.show();
+}

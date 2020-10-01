@@ -20,7 +20,7 @@ enum Motors
   FrontLeft = 3
 };
 
-enum Sides 
+enum Sides
 {
   Left,
   Right,
