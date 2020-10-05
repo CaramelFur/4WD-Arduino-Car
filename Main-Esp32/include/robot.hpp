@@ -2,7 +2,6 @@
 #include <Wire.h>
 #include <FastLED.h>
 #include <SSD1306Wire.h>
-#include <BluetoothSerial.h>
 #include <Adafruit_HMC5883_U.h>
 #include "motor.hpp"
 #include "servosensor.hpp"
@@ -25,12 +24,11 @@
 #define RGB_ADDRESS 0x20
 #define RGB_COUNT 10
 
-void processCommand(String command);
+void beginRobot();
+
+void waitForButton();
 
 void printString(String string);
 
-void initDisplay();
-void initLeds();
-
 void setLeds(int start, int end, CRGB color);
-void setAllLeds(CRGB color);
+void setLeds(CRGB color);

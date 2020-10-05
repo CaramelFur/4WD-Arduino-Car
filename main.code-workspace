@@ -11,10 +11,13 @@
 			"name": "Pwm Driver",
 			"path": "Atmega328p-pwm-driver"
 		},
-
 		{
 			"name": "Sonar Driver",
 			"path": "Attiny85-sonar-driver"
+		},
+		{
+			"name": "ESP32-test",
+			"path": "../../PlatformIO/Projects/ESP32-test"
 		}
 	],
 	"settings": {}

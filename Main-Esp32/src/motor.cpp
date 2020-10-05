@@ -11,6 +11,7 @@ bool beginMotor()
   if (readId() != MOTOR_CONTROLLER_I2C_ADRESS)
     return false;
   resetMotor();
+  moveAllMotors(0);
   return true;
 }
 
