@@ -50,14 +50,26 @@ void setSonarMaxDistance(int16_t maxDistance)
   sendCommand(SENSOR_CMD_PINGSPEED, maxDistance);
 }
 
+void setSonarAverageAmount(int16_t averageAmount)
+{
+  sendCommand(SENSOR_CMD_AVERAGEAMOUNT, averageAmount);
+}
+
+void setSonarSoundSpeed(int16_t soundSpeed)
+{
+  sendCommand(SENSOR_CMD_SOUNDSPEED, soundSpeed);
+}
+
 PullData retrieveSensorData()
 {
   PullData value{
       0,
       0,
       -1,
+      1,
       100,
-      90};
+      90,
+      343};
 
   if (Wire.requestFrom(SENSOR_I2C_ADRESS, 9) < 9)
     return value;
@@ -65,8 +77,10 @@ PullData retrieveSensorData()
   value.id = Wire.read();
   value.currentDistance = read16();
   value.fetchSpeed = read16();
+  value.averageAmount = read16();
   value.maxDistance = read16();
   value.servoPosition = read16();
+  value.soundSpeed = read16();
 
   return value;
 }
@@ -89,4 +103,14 @@ int16_t getSonarMaxDistance()
 int16_t getServoPosition()
 {
   return retrieveSensorData().servoPosition;
+}
+
+int16_t getSonarAverageAmount()
+{
+  return retrieveSensorData().averageAmount;
+}
+
+int16_t getSonarSoundSpeed()
+{
+  return retrieveSensorData().soundSpeed;
 }

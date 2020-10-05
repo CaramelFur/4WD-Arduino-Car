@@ -3,11 +3,15 @@
 const int16_t maxDistanceDefault = 100;
 const int16_t servoPositionDefault = 90;
 const int16_t fetchSpeedDefault = -1;
+const int16_t averageAmountDefault = 1;
+const int16_t soundVelocityDefault = 343;
 
 int16_t maxDistance = maxDistanceDefault;
 int16_t servoPosition = servoPositionDefault;
 int16_t fetchSpeed = fetchSpeedDefault;
 int16_t currentDistance = maxDistanceDefault;
+int16_t averageAmount = averageAmountDefault;
+int16_t soundVelocity = soundVelocityDefault;
 
 Servo servo;
 
@@ -58,11 +62,23 @@ void receiveEvent(int howMany)
       servoPosition = value;
       servo.write(servoPosition);
       break;
+    case 4:
+      averageAmount = value;
+      if (averageAmount < 1)
+        averageAmount = 1;
+      break;
+    case 5:
+      soundVelocity = value;
+      if (soundVelocity < 1)
+        soundVelocity = 1;
+      break;
     case 0xf0:
       maxDistance = maxDistanceDefault;
       servoPosition = servoPositionDefault;
       fetchSpeed = fetchSpeedDefault;
       currentDistance = maxDistanceDefault;
+      averageAmount = averageAmountDefault;
+      soundVelocity = soundVelocityDefault;
       servo.write(servoPosition);
       break;
     case 0xff:
@@ -77,8 +93,10 @@ void readEvent()
   Wire.write(I2C_ADRESS);
   sendInt16(currentDistance);
   sendInt16(fetchSpeed);
+  sendInt16(averageAmount);
   sendInt16(maxDistance);
   sendInt16(servoPosition);
+  sendInt16(soundVelocity);
 }
 
 void sendInt16(int16_t value)
@@ -92,17 +110,23 @@ void sendInt16(int16_t value)
 
 uint16_t getSonar()
 {
-  unsigned long pingTime;
-  uint16_t distance;
+  int tempDistance = 0;
+  for (int16_t i = 0; i < averageAmount; i++)
+  {
+    unsigned long pingTime;
 
-  digitalWrite(pingPin, HIGH); // make trigPin output high level lasting for 10μs to triger HC_SR04,
-  delayMicroseconds(10);
-  digitalWrite(pingPin, LOW);
+    digitalWrite(pingPin, HIGH); // make trigPin output high level lasting for 10μs to triger HC_SR04,
+    delayMicroseconds(10);
+    digitalWrite(pingPin, LOW);
 
-  pingTime = pulseIn(echoPin, HIGH, SONIC_TIMEOUT); // Wait HC-SR04 returning to the high level and measure out this waitting time
-  if (pingTime != 0)
-    distance = pingTime * SOUND_VELOCITY / 2 / 10000; // calculate the distance according to the time
-  else
-    distance = maxDistance;
-  return distance;
+    pingTime = pulseIn(echoPin, HIGH, SONIC_TIMEOUT); // Wait HC-SR04 returning to the high level and measure out this waitting time
+    if (pingTime != 0)
+      tempDistance += pingTime * soundVelocity / 10000; // calculate the distance according to the time
+    else
+      tempDistance += maxDistance;
+
+    delay(1);
+  }
+
+  return tempDistance / averageAmount;
 }

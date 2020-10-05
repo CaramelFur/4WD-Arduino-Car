@@ -29,6 +29,8 @@ void beginRobot();
 void waitForButton();
 
 void printString(String string);
+void printString(String string, String string2);
+void printString(String string, String string2, String string3);
 
 void setLeds(int start, int end, CRGB color);
 void setLeds(CRGB color);

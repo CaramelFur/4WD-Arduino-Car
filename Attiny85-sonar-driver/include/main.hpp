@@ -11,7 +11,6 @@
 #define pingPin 3
 #define echoPin 4
 
-#define SOUND_VELOCITY 340
 #define SONIC_TIMEOUT (maxDistance * 60)
 
 uint16_t getSonar();

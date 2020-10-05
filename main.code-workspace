@@ -20,5 +20,9 @@
 			"path": "../../PlatformIO/Projects/ESP32-test"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"iterator": "cpp"
+		}
+	}
 }
