@@ -1,108 +1,59 @@
 #include "robot.hpp"
 
-enum States
-{
-  towardsWall,
-  turning,
-  centering,
-  done
+#define STEPS 21
+#define SPEED 50
+#define CORNERSPEED 255
+
+int robotSteps[STEPS][3] = {
+    // Draw letter R
+    {SPEED, SPEED, 2000},
+    {CORNERSPEED, -CORNERSPEED, 230},
+    {SPEED, SPEED, 1000},
+    {CORNERSPEED, -CORNERSPEED, 230},
+    {SPEED, SPEED, 1000},
+    {CORNERSPEED, -CORNERSPEED, 230},
+    {SPEED, SPEED, 1000},
+    {-CORNERSPEED, CORNERSPEED, 280},
+    {-CORNERSPEED, CORNERSPEED, 80},
+    {SPEED, SPEED, 1600},
+
+    // Move over
+    {-CORNERSPEED, CORNERSPEED, 100},
+    {SPEED, SPEED, 1000},
+
+    // Draw letter D
+    {SPEED, SPEED, 1000},
+    {-SPEED, -SPEED, 1000},
+    {-CORNERSPEED, CORNERSPEED, 250},
+    {SPEED, SPEED, 1000},
+    {CORNERSPEED, -CORNERSPEED, 230},
+    {SPEED, SPEED, 1000},
+    {CORNERSPEED, -CORNERSPEED, 230},
+    {SPEED, SPEED, 1000},
+    {-SPEED, -SPEED, 2000},
 };
-
-States state = towardsWall;
-
-int aimdistance = 0;
 
 void setup()
 {
   beginRobot();
-  setLeds(CRGB::Red);
-  waitForButton();
-  delay(500);
-  setLeds(CRGB::Green);
-  printString("Driving");
 }
 
 void loop()
 {
-  switch (state)
+  setLeds(CRGB::Red);
+  waitForButton();
+  delay(500);
+  setLeds(CRGB::Green);
+
+  for (int i = 0; i < STEPS; i++)
   {
-  case towardsWall:
-  {
-    int16_t distance = getSonarDistance();
-    printString(String(distance));
-
-    if (distance < 20)
-    {
-      moveAllMotors(-255);
-      delay(100);
-      moveAllMotors(0);
-      state = turning;
-    }
-    else if (distance < 50)
-    {
-      moveAllMotors(100);
-    }
-    else
-    {
-      moveAllMotors(100);
-    }
-  }
-  break;
-
-  case turning:
-  {
-    moveServo(0);
-    delay(400);
-    int16_t rightDistance = getSonarDistance();
-    moveServo(180);
-    delay(400);
-    int16_t leftDistance = getSonarDistance();
-
-    moveServo(90);
-
-    aimdistance = (leftDistance + rightDistance + 5) / 2 - 25 / 2;
-
-    printString(String(leftDistance), String(rightDistance));
-
-    bool dir = rightDistance >= leftDistance;
-
-    moveMotors(Left, dir ? 255 : -255);
-    moveMotors(Right, dir ? -255 : 255);
-    delay(dir ? 200 : 230);
+    printString("Driving...", String(i));
+    moveMotors(Left, robotSteps[i][0]);
+    moveMotors(Right, robotSteps[i][1]);
+    delay(robotSteps[i][2]);
     moveAllMotors(0);
-
-    delay(200);
-
-    state = centering;
-  }
-  break;
-
-  case centering:
-  {
-    int16_t distance = getSonarDistance();
-    printString(String(distance));
-
-    if (distance > aimdistance + 5)
-    {
-      moveAllMotors(50);
-    }
-    else if (distance < aimdistance - 5)
-    {
-      moveAllMotors(-50);
-    }
-    else
-    {
-
-      moveAllMotors(0);
-      setLeds(CRGB::Blue);
-      state = done;
-    }
-  }
-  break;
-
-  default:
-    break;
+    delay(250);
   }
 
-  delay(10);
+  printString("Done!");
 }

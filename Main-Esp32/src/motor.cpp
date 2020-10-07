@@ -82,7 +82,7 @@ void moveMotors(Sides side, uint8_t speed, bool dir)
   }
 }
 
-void moveMotors(Sides side, uint16_t speed)
+void moveMotors(Sides side, int16_t speed)
 {
   switch (side)
   {
